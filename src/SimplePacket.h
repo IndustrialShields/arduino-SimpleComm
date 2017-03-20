@@ -31,7 +31,6 @@ class SimplePacket {
 		bool setData(const uint8_t *data, uint8_t len);
 		bool setData(const char *data);
 		bool setData(const char *data, uint8_t len);
-		bool setData(const String &data);
 
 		bool getBool() const;
 		char getChar() const;
