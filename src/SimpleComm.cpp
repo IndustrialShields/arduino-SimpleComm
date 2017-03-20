@@ -56,10 +56,8 @@ void SimpleComm::begin(uint8_t address) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool SimpleComm::send(SimplePacket &packet, uint8_t destination, uint8_t type) {
-	packet.setDestination(destination);
+bool SimpleComm::send(SimplePacket &packet) {
 	packet.setSource(_address);
-	packet.setType(type);
 
 	uint8_t dlen;
 	const uint8_t *data = packet.getBuffer(dlen);
@@ -67,9 +65,9 @@ bool SimpleComm::send(SimplePacket &packet, uint8_t destination, uint8_t type) {
 	uint8_t *ptr = _buffer;
 	*ptr++ = SYN_VALUE;
 	*ptr++ = PKT_LEN(dlen);
-	*ptr++ = destination;
-	*ptr++ = _address;
-	*ptr++ = type;
+	*ptr++ = packet.getDestination();
+	*ptr++ = packet.getSource();
+	*ptr++ = packet.getType();
 	if (dlen > 0) {
 		memcpy(ptr, data, dlen);
 		ptr += dlen;
@@ -78,6 +76,19 @@ bool SimpleComm::send(SimplePacket &packet, uint8_t destination, uint8_t type) {
 
 	size_t tlen = ptr - _buffer;
 	return _stream.write(_buffer, tlen) == tlen;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+bool SimpleComm::send(SimplePacket &packet, uint8_t destination) {
+	packet.setDestination(destination);
+	return send(packet);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+bool SimpleComm::send(SimplePacket &packet, uint8_t destination, uint8_t type) {
+	packet.setDestination(destination);
+	packet.setType(type);
+	return send(packet);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +124,7 @@ bool SimpleComm::receive(SimplePacket &packet) {
 		packet.setDestination(*ptr++);
 		packet.setSource(*ptr++);
 		packet.setType(*ptr++);
-		if (!packet.set(ptr, tlen - HDR_LEN - FTR_LEN)) {
+		if (!packet.setData(ptr, tlen - HDR_LEN - FTR_LEN)) {
 			// Internal error
 			continue;
 		}

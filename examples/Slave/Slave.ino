@@ -18,9 +18,15 @@
 #include <RS485.h>
 #include <SimpleComm.h>
 
-#define SLAVE_ADDRESS 0x01
-
+// Create SimpleComm interface for sending packets using RS-485 port
 SimpleComm RS485Comm(RS485);
+
+// Create SimplePacket for sending and receiving data
+SimplePacket request;
+SimplePacket response;
+
+// Define slave address to communicate with
+uint8_t slaveAddress = 1;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup() {
@@ -30,53 +36,27 @@ void setup() {
   RS485.begin(19200L);
   RS485.setTimeout(20);
 
-  // Start SimplePacket system
-  RS485Comm.begin(SLAVE_ADDRESS);
-
-	Serial.println("Slave started");
+  // Start SimpleComm
+  RS485Comm.begin(slaveAddress);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop() {
-  // Wait for a request
-  SimplePacket request;
+  // Get requests
   if (RS485Comm.receive(request)) {
-    // Print the request
-    Serial.print("Received request: ");
-    printPacket(request);
+    int value = request.getInt();
 
-    // Prepare response
-    SimplePacket response;
-    response.set(request.getInt());
+    Serial.print("Received value: ");
+    Serial.println(value);
 
-    // Send response
-    RS485Comm.send(response, request.getSource(), request.getType());
+    // Process value
+    value++;
 
-    // Print the response
-    Serial.print("Sent response: ");
-    printPacket(response);
-  }
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-void printPacket(const SimplePacket &packet) {
-  Serial.print("dst: ");
-  Serial.print(packet.getDestination(), HEX);
-  Serial.print(", src: ");
-  Serial.print(packet.getSource(), HEX);
-  Serial.print(", typ: ");
-  Serial.print(packet.getType(), HEX);
-  Serial.print(", dat: ");
-  uint8_t dlen;
-  const uint8_t *data = packet.getBuffer(dlen);
-  if (data) {
-    while (dlen--) {
-      Serial.print(*data++, HEX);
-      Serial.print(' ');
+    // Send response to the request packet source
+    response.setData(value);
+    if (RS485Comm.send(response, request.getSource())) {
+      Serial.print("Sent value: ");
+      Serial.println(value);
     }
-  } else {
-    Serial.print("<empty>");
   }
-  Serial.println();
 }

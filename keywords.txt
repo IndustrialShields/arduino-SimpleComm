@@ -3,15 +3,14 @@ SimplePacket	KEYWORD1
 SimpleComm	KEYWORD1
 
 # FUNCTIONS (KEYWORD2)
-begin	KEYWORD2
-get	KEYWORD2
 clear	KEYWORD2
-isValid	KEYWORD2
-getRaw	KEYWORD2
+setSource	KEYWORD2
+setDestination	KEYWORD2
+setType	KEYWORD2
 getSource	KEYWORD2
 getDestination	KEYWORD2
 getType	KEYWORD2
-set	KEYWORD2
+setData	KEYWORD2
 getBool	KEYWORD2
 getChar	KEYWORD2
 getUChar	KEYWORD2
@@ -22,15 +21,6 @@ getULong	KEYWORD2
 getDouble	KEYWORD2
 getBuffer	KEYWORD2
 getString	KEYWORD2
-send	KEYWORD2
-receive	KEYWORD2
-clear	KEYWORD2
-setSource	KEYWORD2
-setDestination	KEYWORD2
-setType	KEYWORD2
-getSource	KEYWORD2
-getDestination	KEYWORD2
-getType	KEYWORD2
 getDataLength	KEYWORD2
 
 # CONSTANTS (LITERAL1)

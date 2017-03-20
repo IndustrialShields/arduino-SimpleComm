@@ -19,8 +19,8 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 SimplePacket::SimplePacket() {
-	_len = 0;
 	_data = NULL;
+	clear();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,52 +48,55 @@ void SimplePacket::clear() {
 	if (_data) {
 		delete[] _data;
 		_data = NULL;
-		_len = 0;
 	}
+	_len = 0;
+	_destination = 0;
+	_source = 0;
+	_type = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool SimplePacket::set(bool data) {
-	return set((unsigned char) data ? 0x01 : 0x00);
+bool SimplePacket::setData(bool data) {
+	return setData((unsigned char) data ? 0x01 : 0x00);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool SimplePacket::set(char data) {
-	return set((uint8_t *) &data, sizeof(data));
+bool SimplePacket::setData(char data) {
+	return setData((uint8_t *) &data, sizeof(data));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool SimplePacket::set(unsigned char data) {
-	return set((uint8_t *) &data, sizeof(data));
+bool SimplePacket::setData(unsigned char data) {
+	return setData((uint8_t *) &data, sizeof(data));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool SimplePacket::set(int data) {
-	return set((uint8_t *) &data, sizeof(data));
+bool SimplePacket::setData(int data) {
+	return setData((uint8_t *) &data, sizeof(data));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool SimplePacket::set(unsigned int data) {
-	return set((uint8_t *) &data, sizeof(data));
+bool SimplePacket::setData(unsigned int data) {
+	return setData((uint8_t *) &data, sizeof(data));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool SimplePacket::set(long data) {
-	return set((uint8_t *) &data, sizeof(data));
+bool SimplePacket::setData(long data) {
+	return setData((uint8_t *) &data, sizeof(data));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool SimplePacket::set(unsigned long data) {
-	return set((uint8_t *) &data, sizeof(data));
+bool SimplePacket::setData(unsigned long data) {
+	return setData((uint8_t *) &data, sizeof(data));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool SimplePacket::set(double data) {
-	return set((uint8_t *) &data, sizeof(data));
+bool SimplePacket::setData(double data) {
+	return setData((uint8_t *) &data, sizeof(data));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool SimplePacket::set(const uint8_t *data, uint8_t len) {
+bool SimplePacket::setData(const uint8_t *data, uint8_t len) {
 	if (!data) {
 		// Empty packet
 		len = 0;
@@ -112,23 +115,23 @@ bool SimplePacket::set(const uint8_t *data, uint8_t len) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool SimplePacket::set(const char *data) {
+bool SimplePacket::setData(const char *data) {
 	if (!data) {
 		init(0);
 		return true;
 	}
 
-	return set((uint8_t *) data, strlen(data) + 1);
+	return setData((uint8_t *) data, strlen(data) + 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool SimplePacket::set(const char *data, uint8_t len) {
+bool SimplePacket::setData(const char *data, uint8_t len) {
 	if (!data) {
 		init(0);
 		return true;
 	}
 
-	return set((uint8_t *) data, len);
+	return setData((uint8_t *) data, len);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

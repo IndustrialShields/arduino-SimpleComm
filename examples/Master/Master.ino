@@ -18,16 +18,20 @@
 #include <RS485.h>
 #include <SimpleComm.h>
 
-#define MASTER_ADDRESS 0x00
-#define SLAVE_ADDRESS 0x01
-#define TYPE 0x13
-
-#define SEND_PERIOD 1000 // ms
-
+// Create SimpleComm interface for sending packets using RS-485 port
 SimpleComm RS485Comm(RS485);
 
-unsigned int counter = 0;
-unsigned long lastSent = 0;
+// Create SimplePacket for sending and receiving data
+SimplePacket packet;
+
+// Define master address
+uint8_t masterAddress = 0;
+
+// Define slave address to communicate with
+uint8_t slaveAddress = 1;
+
+// Value to send as packet data
+int value = 0;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup() {
@@ -37,57 +41,34 @@ void setup() {
   RS485.begin(19200L);
   RS485.setTimeout(20);
 
-  // Start SimpleComm system
-  RS485Comm.begin(MASTER_ADDRESS);
-
-	Serial.println("Master started");
+  // Start SimpleComm
+  RS485Comm.begin(masterAddress);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop() {
-  if (millis() - lastSent >= SEND_PERIOD) {
-    // Prepare request packet
-    SimplePacket request;
-    request.set(counter);
+  static unsigned long lastSent = millis();
 
-    // Send it to slave through RS485 port
-    if (RS485Comm.send(request, SLAVE_ADDRESS, TYPE)) {
+  // Send packet periodically: once per second
+  if (millis() - lastSent >= 1000) {
+    // Set request packet data
+    packet.setData(value);
+
+    // Send request to slave
+    if (RS485Comm.send(packet, slaveAddress)) {
       lastSent = millis();
-      counter++;
 
-      // Print the request
-      Serial.print("Sent request: ");
-      printPacket(request);
+      Serial.print("Sent value: ");
+      Serial.println(value);
     }
   }
 
   // Get responses
-  SimplePacket response;
-  if (RS485Comm.receive(response)) {
-    // Print the response
-    Serial.print("Received response: ");
-    printPacket(response);
-  }
-}
+  if (RS485Comm.receive(packet)) {
+    Serial.print("Received value: ");
+    Serial.println(packet.getUInt());
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-void printPacket(const SimplePacket &packet) {
-  Serial.print("dst: ");
-  Serial.print(packet.getDestination(), HEX);
-  Serial.print(", src: ");
-  Serial.print(packet.getSource(), HEX);
-  Serial.print(", typ: ");
-  Serial.print(packet.getType(), HEX);
-  Serial.print(", dat: ");
-  uint8_t dlen;
-  const uint8_t *data = packet.getBuffer(dlen);
-  if (data) {
-    while (dlen--) {
-      Serial.print(*data++, HEX);
-      Serial.print(' ');
-    }
-  } else {
-    Serial.print("<empty>");
+    // Update value from the response
+    value = packet.getInt();
   }
-  Serial.println();
 }

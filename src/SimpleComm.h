@@ -12,7 +12,9 @@ class SimpleComm {
 	public:
 		void begin(uint8_t address);
 
-		bool send(SimplePacket &packet, uint8_t destination, uint8_t type = 0);
+		bool send(SimplePacket &packet);
+		bool send(SimplePacket &packet, uint8_t destination);
+		bool send(SimplePacket &packet, uint8_t destination, uint8_t type);
 		bool receive(SimplePacket &packet);
 
 	private:

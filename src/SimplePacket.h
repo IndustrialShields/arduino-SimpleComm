@@ -20,18 +20,18 @@ class SimplePacket {
 		uint8_t getType() const;
 
 		// Payload (data) functions
-		bool set(bool data);
-		bool set(char data);
-		bool set(unsigned char data);
-		bool set(int data);
-		bool set(unsigned int data);
-		bool set(long data);
-		bool set(unsigned long data);
-		bool set(double data);
-		bool set(const uint8_t *data, uint8_t len);
-		bool set(const char *data);
-		bool set(const char *data, uint8_t len);
-		bool set(const String &data);
+		bool setData(bool data);
+		bool setData(char data);
+		bool setData(unsigned char data);
+		bool setData(int data);
+		bool setData(unsigned int data);
+		bool setData(long data);
+		bool setData(unsigned long data);
+		bool setData(double data);
+		bool setData(const uint8_t *data, uint8_t len);
+		bool setData(const char *data);
+		bool setData(const char *data, uint8_t len);
+		bool setData(const String &data);
 
 		bool getBool() const;
 		char getChar() const;
