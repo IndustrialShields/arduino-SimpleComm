@@ -22,6 +22,8 @@ getDouble	KEYWORD2
 getBuffer	KEYWORD2
 getString	KEYWORD2
 getDataLength	KEYWORD2
+send	KEYWORD2
+receive	KEYWORD2
 
 # CONSTANTS (LITERAL1)
 

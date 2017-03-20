@@ -18,9 +18,6 @@
 #include <RS485.h>
 #include <SimpleComm.h>
 
-// Create SimpleComm interface for sending packets using RS-485 port
-SimpleComm RS485Comm(RS485);
-
 // Create SimplePacket for sending and receiving data
 SimplePacket packet;
 
@@ -42,7 +39,7 @@ void setup() {
   RS485.setTimeout(20);
 
   // Start SimpleComm
-  RS485Comm.begin(masterAddress);
+  SimpleComm.begin(masterAddress);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,7 +52,7 @@ void loop() {
     packet.setData(value);
 
     // Send request to slave
-    if (RS485Comm.send(packet, slaveAddress)) {
+    if (SimpleComm.send(RS485, packet, slaveAddress)) {
       lastSent = millis();
 
       Serial.print("Sent value: ");
@@ -64,11 +61,11 @@ void loop() {
   }
 
   // Get responses
-  if (RS485Comm.receive(packet)) {
-    Serial.print("Received value: ");
-    Serial.println(packet.getUInt());
-
+  if (SimpleComm.receive(RS485, packet)) {
     // Update value from the response
     value = packet.getInt();
+
+    Serial.print("Received value: ");
+    Serial.println(value);
   }
 }

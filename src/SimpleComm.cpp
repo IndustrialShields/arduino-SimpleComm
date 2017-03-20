@@ -46,18 +46,19 @@
 static uint8_t _buffer[SYN_LEN + LEN_LEN + 256];
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-SimpleComm::SimpleComm(Stream &stream) : _stream(stream) {
+SimpleCommClass::SimpleCommClass() {
 	_address = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void SimpleComm::begin(uint8_t address) {
+void SimpleCommClass::begin(uint8_t address) {
 	_address = address;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool SimpleComm::send(SimplePacket &packet) {
+bool SimpleCommClass::send(Stream &stream, SimplePacket &packet, uint8_t destination) {
 	packet.setSource(_address);
+	packet.setDestination(destination);
 
 	uint8_t dlen;
 	const uint8_t *data = packet.getBuffer(dlen);
@@ -75,35 +76,28 @@ bool SimpleComm::send(SimplePacket &packet) {
 	*ptr++ = calcCRC(_buffer + SYN_LEN + LEN_LEN, HDR_LEN + dlen);
 
 	size_t tlen = ptr - _buffer;
-	return _stream.write(_buffer, tlen) == tlen;
+	return stream.write(_buffer, tlen) == tlen;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool SimpleComm::send(SimplePacket &packet, uint8_t destination) {
-	packet.setDestination(destination);
-	return send(packet);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-bool SimpleComm::send(SimplePacket &packet, uint8_t destination, uint8_t type) {
-	packet.setDestination(destination);
+bool SimpleCommClass::send(Stream &stream, SimplePacket &packet, uint8_t destination, uint8_t type) {
 	packet.setType(type);
-	return send(packet);
+	return send(stream, packet, destination);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool SimpleComm::receive(SimplePacket &packet) {
-	while (_stream.available() >= SYN_LEN + LEN_LEN) {
-		if (_stream.read() != SYN_VALUE) {
+bool SimpleCommClass::receive(Stream &stream, SimplePacket &packet) {
+	while (stream.available() >= SYN_LEN + LEN_LEN) {
+		if (stream.read() != SYN_VALUE) {
 			// Unsynchronized
 			continue;
 		}
 
 		// Get packet length
-		uint8_t tlen = _stream.read();
+		uint8_t tlen = stream.read();
 
 		// Get packet
-		if (_stream.readBytes(_buffer, tlen) != tlen) {
+		if (stream.readBytes(_buffer, tlen) != tlen) {
 			// Timeout
 			continue;
 		}
@@ -136,10 +130,12 @@ bool SimpleComm::receive(SimplePacket &packet) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-uint8_t SimpleComm::calcCRC(uint8_t *buffer, size_t len) {
+uint8_t SimpleCommClass::calcCRC(uint8_t *buffer, size_t len) {
 	uint8_t ret = 0;
 	while (len--) {
 		ret += *buffer++;
 	}
 	return ret;
 }
+
+SimpleCommClass SimpleComm;
