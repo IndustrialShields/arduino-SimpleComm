@@ -23,7 +23,7 @@
 // |         |         |                       PKT                       |
 // |_________|_________|_________________________________________________|
 // |         |         |                             |         |         |
-// |   SYN   |   LEN   |            HDR              |   DAT   |   FTR   |
+// |   SYN   |   LEN   |            HDR              |   DAT   |   CRC   |
 // |_________|_________|_____________________________|_________|_________|
 // |         |         |         |         |         |         |         |
 // | SYN (1) | LEN (1) | DST (1) | SRC (1) | TYP (1) |   DAT   | CRC (1) |
@@ -37,9 +37,8 @@
 #define TYP_LEN 1
 #define HDR_LEN (DST_LEN + SRC_LEN + TYP_LEN)
 #define CRC_LEN 1
-#define FTR_LEN (CRC_LEN)
 
-#define PKT_LEN(dlen) (HDR_LEN + (dlen) + FTR_LEN)
+#define PKT_LEN(dlen) (HDR_LEN + (dlen) + CRC_LEN)
 
 #define SYN_VALUE 0x02
 
@@ -118,7 +117,7 @@ bool SimpleCommClass::receive(Stream &stream, SimplePacket &packet) {
 		packet.setDestination(*ptr++);
 		packet.setSource(*ptr++);
 		packet.setType(*ptr++);
-		if (!packet.setData(ptr, tlen - HDR_LEN - FTR_LEN)) {
+		if (!packet.setData(ptr, tlen - HDR_LEN - CRC_LEN)) {
 			// Internal error
 			continue;
 		}
