@@ -28,9 +28,9 @@ class SimplePacket {
 		bool setData(long data);
 		bool setData(unsigned long data);
 		bool setData(double data);
-		bool setData(const uint8_t *data, uint8_t len);
+		bool setData(const String &data);
 		bool setData(const char *data);
-		bool setData(const char *data, uint8_t len);
+		bool setData(const void *data, uint8_t len);
 
 		bool getBool() const;
 		char getChar() const;
@@ -40,9 +40,8 @@ class SimplePacket {
 		long getLong() const;
 		unsigned long getULong() const;
 		double getDouble() const;
-		const uint8_t *getBuffer(uint8_t &len) const;
 		const char *getString() const;
-		const char *getString(uint8_t &len) const;
+		const uint8_t *getBuffer(uint8_t &len) const;
 
 		uint8_t getDataLength() const;
 
