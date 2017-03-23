@@ -41,7 +41,8 @@ class SimplePacket {
 		unsigned long getULong() const;
 		double getDouble() const;
 		const char *getString() const;
-		const uint8_t *getBuffer(uint8_t &len) const;
+		const void *getData() const;
+		const void *getData(uint8_t &len) const;
 
 		uint8_t getDataLength() const;
 
