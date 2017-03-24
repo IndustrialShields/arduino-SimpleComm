@@ -60,7 +60,7 @@ bool SimpleCommClass::send(Stream &stream, SimplePacket &packet, uint8_t destina
 	packet.setDestination(destination);
 
 	uint8_t dlen;
-	const uint8_t *data = packet.getBuffer(dlen);
+	const uint8_t *data = packet.getData(dlen);
 
 	uint8_t *ptr = _buffer;
 	*ptr++ = SYN_VALUE;
