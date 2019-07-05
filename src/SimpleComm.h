@@ -10,9 +10,9 @@ class SimpleCommClass {
 		explicit SimpleCommClass();
 
 	public:
-		void begin(uint8_t address);
+		void begin(uint8_t address = 0);
 
-		bool send(Stream &stream, SimplePacket &packet, uint8_t destination);
+		bool send(Stream &stream, SimplePacket &packet, uint8_t destination = 0);
 		bool send(Stream &stream, SimplePacket &packet, uint8_t destination, uint8_t type);
 		bool receive(Stream &stream, SimplePacket &packet);
 
@@ -25,4 +25,4 @@ class SimpleCommClass {
 
 extern SimpleCommClass SimpleComm;
 
-#endif // __SimplePacket_H__
+#endif // __SimpleComm_H__
